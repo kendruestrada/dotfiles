@@ -1,0 +1,50 @@
+#!/bin/sh
+
+projectKey=$(git config --get remote.origin.url | awk -F / '{print $5}')
+repositorySlug=$(git config --get remote.origin.url | awk -F / '{ gsub(".git","",$6); print $6}')
+branch=$(git rev-parse --abbrev-ref HEAD)
+branchto=$1
+descripcion=$2
+
+cat << EOF | curl -u exapside6:Consorcio.2020 -H "Content-Type: application/json" http://bitbucket.ic.cnsv.cl/rest/api/1.0/projects/${projectKey}/repos/${repositorySlug}/pull-requests -X POST -d @-
+{
+    "title": "${branch}",
+    "description": "$descripcion",
+    "state": "OPEN",
+    "open": true,
+    "closed": false,
+    "fromRef": {
+        "id": "refs/heads/${branch}",
+        "repository": {
+            "slug": "${repositorySlug}",
+            "name": null,
+            "project": {
+                "key": "${projectKey}"
+            }
+        }
+    },
+    "toRef": {
+        "id": "refs/heads/${branchto}",
+        "repository": {
+            "slug": "${repositorySlug}",
+            "name": null,
+            "project": {
+                "key": "${projectKey}"
+            }
+        }
+    },
+    "locked": false,
+    "reviewers": [
+        {
+            "user": {
+                "name": "exapside5"
+            }
+        }
+    ],
+    "links": {
+        "self": [
+            null
+        ]
+    }
+}
+EOF

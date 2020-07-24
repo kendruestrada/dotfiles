@@ -1,0 +1,12 @@
+#!/bin/sh
+
+projectKey=$(git config --get remote.origin.url | awk -F / '{print $5}')
+repositorySlug=$(git config --get remote.origin.url | awk -F / '{ gsub(".git","",$6); print $6}')
+branch=$(git rev-parse --abbrev-ref HEAD)
+PRID=$1
+
+
+curl -u exapside5:Edispa01.20 -H "Content-Type: application/json" http://bitbucket.ic.cnsv.cl/rest/api/1.0/projects/${projectKey}/repos/${repositorySlug}/pull-requests/${PRID}/approve -X POST
+curl -u exapside5:Edispa01.20 -H "Content-Type: application/json" http://bitbucket.ic.cnsv.cl/rest/api/1.0/projects/${projectKey}/repos/${repositorySlug}/pull-requests/${PRID}/merge?version=$2 -X POST
+ 
+
